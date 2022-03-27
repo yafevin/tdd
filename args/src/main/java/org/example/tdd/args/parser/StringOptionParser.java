@@ -1,4 +1,4 @@
-package org.example.tdd.args;
+package org.example.tdd.args.parser;
 
 import java.util.List;
 
@@ -9,11 +9,12 @@ import org.example.tdd.args.annotation.Option;
  *
  * @author yafevin
  */
-class StringOptionParser implements OptionParser {
+@Deprecated
+public class StringOptionParser implements OptionParser<String> {
 
     @Override
-    public Object parse(List<String> argumrnts, Option option) {
-        int index = argumrnts.indexOf("-" + option.value());
-        return argumrnts.get(index + 1);
+    public String parse(List<String> arguments, Option option) {
+        int index = arguments.indexOf("-" + option.value());
+        return arguments.get(index + 1);
     }
 }

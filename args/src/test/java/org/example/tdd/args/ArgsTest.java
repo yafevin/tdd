@@ -1,10 +1,11 @@
 package org.example.tdd.args;
 
 import org.example.tdd.args.annotation.Option;
+import org.example.tdd.args.exception.IllegalOptionException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -14,30 +15,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class ArgsTest {
     @Test
-    void should_be_true_if_flag_present() {
-        BooleanOption option = Args.parse(BooleanOption.class, "-l");
-        assertTrue(option.logging());
+    void should_parse_nulti_options() {
+        MultiOptions options = Args.parse(MultiOptions.class, "-l", "-p", "8080", "-d", "/usr/logs");
+        assertTrue(options.logging());
+        assertEquals(8080, options.port());
+        assertEquals("/usr/logs", options.directory());
     }
 
     @Test
-    void should_be_false_if_flag_not_present() {
-        BooleanOption option = Args.parse(BooleanOption.class);
-        assertFalse(option.logging());
+    void should_throw_illegal_option_exception_if_annotation_not_present() {
+        IllegalOptionException e = assertThrows(IllegalOptionException.class,
+                () -> Args.parse(OptionWithoutAnnotation.class, "-l", "-p", "8080", "-d", "/usr/logs"));
+        assertEquals("port", e.getParameter());
     }
 
-    @Test
-    void should_parse_int_as_option_value() {
-        IntOption option = Args.parse(IntOption.class, "-p", "8080");
-        assertEquals(8080, option.port());
+    record OptionWithoutAnnotation(@Option("l") boolean logging, int port, @Option("d") String directory) {
     }
 
-    @Test
-    void should_parse_string_as_option_value() {
-        StringOption option = Args.parse(StringOption.class, "-d", "/usr/logs");
-        assertEquals("/usr/logs", option.directory());
-    }
-
-    record Options(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
+    record MultiOptions(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
     record ListOptions(@Option("g") String[] group, @Option("g") int[] decimals) {

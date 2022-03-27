@@ -1,4 +1,4 @@
-package org.example.tdd.args;
+package org.example.tdd.args.parser;
 
 import java.util.List;
 
@@ -9,6 +9,6 @@ import org.example.tdd.args.annotation.Option;
  *
  * @author yafevin
  */
-interface OptionParser {
-    Object parse(List<String> argumrnts, Option option);
+public interface OptionParser<T> {
+    T parse(List<String> arguments, Option option);
 }
