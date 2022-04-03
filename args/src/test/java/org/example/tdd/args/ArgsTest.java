@@ -4,6 +4,7 @@ import org.example.tdd.args.annotation.Option;
 import org.example.tdd.args.exception.IllegalOptionException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,21 +30,19 @@ public class ArgsTest {
         assertEquals("port", e.getParameter());
     }
 
+    @Test
+    void should_example2() {
+        ListOptions options = Args.parse(ListOptions.class, "-g", "this", "is", "a", "list", "-d", "1", "2", "-3", "-5");
+        assertArrayEquals(new String[]{"this", "is", "a", "list"}, options.group());
+        assertArrayEquals(new Integer[]{1, 2, -3, -5}, options.decimals());
+    }
+
     record OptionWithoutAnnotation(@Option("l") boolean logging, int port, @Option("d") String directory) {
     }
 
     record MultiOptions(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
-    record ListOptions(@Option("g") String[] group, @Option("g") int[] decimals) {
-    }
-
-    record BooleanOption(@Option("l") boolean logging) {
-    }
-
-    record IntOption(@Option("p") int port) {
-    }
-
-    record StringOption(@Option("d") String directory) {
+    record ListOptions(@Option("g") String[] group, @Option("d") Integer[] decimals) {
     }
 }
